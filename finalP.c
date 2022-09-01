@@ -1,12 +1,19 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<conio.h>
+
+void department_addProduct();
+void department_displayProduct();
+void department_updateProduct();
+void department_deleteProduct();
+void department_buyProduct();
+void del_func();
 
 struct record
 {
     char productName[100];
-    float rate;
-    int quantity,code;
+    int quantity,code,rate;
 } r;
 
 FILE *fp;
@@ -33,7 +40,7 @@ int main()
         printf("\n\t\t\t\t| 5 BUY PRODUCT                             |");
         printf("\n\t\t\t\t| ______________________________________|");
         printf("\n\t\t\t\t| 0 EXIT                                     |\n\t\t\t\t__________________________");
-        printf("\n\t\t\t\tPLEASE CHOOSE A NUMBER IN THE BOX ABOVE:");
+        printf("\n\t\t\t\tPLEASE CHOOSE A NUMBER IN THE BOX ABOVE: ");
         scanf("%d",&choice);
 
         switch(choice)
@@ -59,12 +66,13 @@ int main()
 
             case 5:
                 department_buyProduct();
+                break;
             
             default:
-                printf("Invalid choice..: ");
+                printf("  ----Error---- ");
         }
 
-        printf("Enter any key to continue: ");
+        printf("\nEnter any key to continue: ");
         getch();
     }
     return 0;
@@ -86,7 +94,11 @@ void department_addProduct()
     fflush(stdin);
     scanf("%d", &r.quantity);
 
-    printf("Product added: ");
+    printf("Enter rate: ");
+    fflush(stdin);
+    scanf("%d", &r.rate);
+
+    printf(" \n----Product added---- ");
 
     fwrite(&r, sizeof(r),1, fp);
     fclose(fp);
@@ -95,16 +107,17 @@ void department_addProduct()
 void department_displayProduct() 
 {
     system("cls");
-    printf("  Product list   ");
+    printf("   ----Product list----\n\n   ");
+    printf("%-10s %-30s %-30s %s\n", "Code", "Product Name", "Quantity", "Rate");
 
     fp = fopen("product.txt", "rb");
-    while (fread(&r, sizeof(r),1, fp) == 1)
+    while(fread(&r, sizeof(r),1, fp) == 1)
     {
-        printf("%d %s %d %f", r.code, r.productName, r.quantity, r.rate);
+        printf("%-10d %-30s %-30d %d", r.code, r.productName, r.quantity, r.rate);
+        printf("\n");
     }
 
     fclose(fp);
-    
 }
 
 void department_updateProduct()
@@ -112,7 +125,7 @@ void department_updateProduct()
     int code, f;
 
     system("cls");
-    printf("Update product");
+    printf("    ----Update product----\n\n    ");
     printf("Enter product code: ");
     scanf("%d", &code);
 
@@ -129,9 +142,13 @@ void department_updateProduct()
             fflush(stdin);
             gets(r.productName);
 
-            printf("Enter qualntity of new product: ");
+            printf("Enter quantity of new product: ");
             fflush(stdin);
-            scanf("%d", &r.code);
+            scanf("%d", &r.quantity);
+
+            printf("Enter rate: ");
+            fflush(stdin);
+            scanf("%d", &r.rate);
 
             fseek(fp, -sizeof(r), 1);
             fwrite(&r, sizeof(r),1 , fp);
@@ -141,12 +158,12 @@ void department_updateProduct()
     }
     if (f == 1)
     {
-        printf("\nProduct updated");
+        printf("\n----Product updated----");
         
     }
     else
         {
-            printf("\nError");
+            printf("\n\n----Error----");
         }
 }
 
@@ -155,7 +172,7 @@ void department_deleteProduct()
     int code, f;
 
     system("cls");
-    printf("Delete products");
+    printf("----Delete products----\n\n");
     printf("Enter code of the product to delete: ");
     scanf("%d", &code);
 
@@ -175,12 +192,12 @@ void department_deleteProduct()
 
     if(f == 1)
     {
-        printf("\nProduct deleted");
+        printf("\n--Product deleted--");
         del_func(code);
     }
     else
     {
-        printf("\n\nError");
+        printf("\n\n----Error----");
     }
 }
 
@@ -189,8 +206,10 @@ void department_buyProduct()
     int code, f = 0;
 
     system("cls");
+    printf("----Buy Product----\n\n");
     printf("Enter code of the product to buy: ");
-    scanf("%d", code);
+    scanf("%d", &code);
+
 
     fp = fopen("product.txt", "rb+");
 
@@ -211,19 +230,19 @@ void department_buyProduct()
         }
     }
 
-    if (f == 1)
+    if (f == 0)
     {
-        printf("\nProduct bought ");
+        printf("\n\n----Error----");
     }
     else
     {
-        printf("\n\nError");
+        printf("\n----Product bought----");
     }
 }
 
-void del_func()
+void del_func(int code)
 {
-    int code, f = 0;
+    int f = 0;
 
     FILE *ft;
 
